@@ -16,7 +16,7 @@ export function hypot(a: f64, b: f64): f64
 //-----------------------------------
 
 var width  = 320;
-var height = 200;
+var height = 320;
 
 // Let's utilize the entire heap as our image buffer
 export const offset = __heap_base;
@@ -44,7 +44,7 @@ export function update(tick: f32): void {
       cy1 = (Mathf.cos(tick)                            ) * hh * 0.3 + hh,
       cx2 = (Mathf.sin(tick * 4) + Mathf.sin(tick + 1.2)) * hw * 0.3 + hw,
       cy2 = (Mathf.sin(tick * 3) + Mathf.cos(tick + 0.1)) * hh * 0.3 + hh;
-  var res = <f32>48 / Mathf.max(w, h);
+  var res = <f32>192 / Mathf.max(w, h);
   var y = 0;
   do {
     let x = 0;

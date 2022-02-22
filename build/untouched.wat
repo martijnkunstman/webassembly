@@ -8,7 +8,7 @@
  (type $f32_=>_none (func (param f32)))
  (type $i32_i32_=>_none (func (param i32 i32)))
  (global $assembly/index/width (mut i32) (i32.const 320))
- (global $assembly/index/height (mut i32) (i32.const 200))
+ (global $assembly/index/height (mut i32) (i32.const 320))
  (global $assembly/index/offset (mut i32) (i32.const 0))
  (global $~lib/ASC_SHRINK_LEVEL i32 (i32.const 0))
  (global $~lib/math/rempio2f_y (mut f64) (f64.const 0))
@@ -1415,7 +1415,7 @@
   local.get $4
   f32.add
   local.set $8
-  f32.const 48
+  f32.const 192
   local.get $1
   local.set $10
   local.get $2

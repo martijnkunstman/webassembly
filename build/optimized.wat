@@ -6,7 +6,7 @@
  (type $i32_i32_=>_none (func (param i32 i32)))
  (type $none_=>_none (func))
  (global $assembly/index/width (mut i32) (i32.const 320))
- (global $assembly/index/height (mut i32) (i32.const 200))
+ (global $assembly/index/height (mut i32) (i32.const 320))
  (global $assembly/index/offset (mut i32) (i32.const 0))
  (global $~lib/math/rempio2f_y (mut f64) (f64.const 0))
  (memory $0 1)
@@ -1020,7 +1020,7 @@
   local.get $10
   f32.add
   local.set $10
-  f32.const 48
+  f32.const 192
   local.get $7
   local.get $9
   f32.max
