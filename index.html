@@ -1,54 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
+
+
+
+
     <h1>WebAssembly is x times faster:<span id="result"></span></h1>
+    <canvas id="canvas" style="width: 100%; height: 100%; background: #aff"></canvas>
+
+
     <script>
+        var step = 0.012;
+
         fetch("build/optimized.wasm")
-        .then(response => response.arrayBuffer())
-        .then(buffer => WebAssembly.instantiate(buffer))
-        .then(module => {
-            var exports = module.instance.exports;
-            var addFunc = exports.add;
-            var multiplyFunc = exports.multiply;
-            var hypotFunc = exports.hypot;          
-            //
-            let array = [];
-            for (a=0;a<10000000;a++)
-            {
-                array.push([Math.random()*100,Math.random()*100]);
-            }
-            //
-            let distance = 0;
-            var startTime = performance.now()
-            for (a=0;a<array.length;a++)
-            {
-                distance = distance + Math.hypot(array[a][0],array[a][1])
-            }
-            var endTime = performance.now()
-            var time1 = endTime - startTime;
-            console.log(`Call to doSomething JS way took ${endTime - startTime} milliseconds`);
-            //
-            distance = 0;
-            startTime = performance.now()
-            for (a=0;a<array.length;a++)
-            {
-                distance = distance + hypotFunc(array[a][0],array[a][1])
-            }
-            endTime = performance.now()
-            var time2 = endTime - startTime;
-            console.log(`Call to doSomething WA way took ${endTime - startTime} milliseconds`);
-            //
-            document.getElementById("result").innerHTML=time1/time2;
+            .then(response => response.arrayBuffer())
+            .then(buffer => WebAssembly.instantiate(buffer))
+            .then(module => {
+                var exports = module.instance.exports;
+                var addFunc = exports.add;
+                var multiplyFunc = exports.multiply;
+                var hypotFunc = exports.hypot;
+                //
+                let array = [];
+                for (a = 0; a < 10000000; a++) {
+                    array.push([Math.random() * 100, Math.random() * 100]);
+                }
+                //
+                let distance = 0;
+                var startTime = performance.now()
+                for (a = 0; a < array.length; a++) {
+                    distance = distance + Math.hypot(array[a][0], array[a][1])
+                }
+                var endTime = performance.now()
+                var time1 = endTime - startTime;
+                console.log(`Call to doSomething JS way took ${endTime - startTime} milliseconds`);
+                //
+                distance = 0;
+                startTime = performance.now()
+                for (a = 0; a < array.length; a++) {
+                    distance = distance + hypotFunc(array[a][0], array[a][1])
+                }
+                endTime = performance.now()
+                var time2 = endTime - startTime;
+                console.log(`Call to doSomething WA way took ${endTime - startTime} milliseconds`);
+                //
+                document.getElementById("result").innerHTML = time1 / time2;
+                //---------------
+                const canvas = document.getElementById("canvas");
+                const context = canvas.getContext("2d");
 
-            
+                // Upscale the image to speed up calculations
+                const upscaleFactor = 4;
 
-        })
+                var width, height, image;
+
+                // Inform the module about the viewport's size, incl. on resize
+                function onresize() {
+                    width = (canvas.offsetWidth / upscaleFactor) | 0;
+                    height = (canvas.offsetHeight / upscaleFactor) | 0;
+                    canvas.width = width;
+                    canvas.height = height;
+                    image = context.createImageData(width, height);
+                    exports.resize(width, height);
+                }
+                onresize();
+                new ResizeObserver(onresize).observe(canvas);
+
+                // Keep updating the image
+                var tick = 0.0;
+                (function update() {
+                    requestAnimationFrame(update);
+                    exports.update(tick += step);
+                    new Uint32Array(image.data.buffer).set(new Uint32Array(exports.memory.buffer, exports
+                        .offset, width * height));
+                    context.putImageData(image, 0, 0);
+                })();
+                //---------------
+
+
+
+            })
     </script>
 </body>
+
 </html>
