@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Result of WebAssembly function by JS: <span id="result"></span></h1>
+    <script>
+        fetch("build/optimized.wasm")
+        .then(response => response.arrayBuffer())
+        .then(buffer => WebAssembly.instantiate(buffer))
+        .then(module => {
+            var exports = module.instance.exports;
+            var addFunc = exports.add;
+            var multiplyFunc = exports.multiply;
+
+            console.log(addFunc(5,9));
+            document.getElementById("result").innerHTML=addFunc(21,21);
+            document.getElementById("result").innerHTML+=" - "+multiplyFunc(10,10);
+        })
+    </script>
+</body>
+</html>
