@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Result of WebAssembly function by JS: <span id="result"></span></h1>
+    <h1>WebAssembly is x times faster:<span id="result"></span></h1>
     <script>
         fetch("build/optimized.wasm")
         .then(response => response.arrayBuffer())
@@ -16,10 +16,38 @@
             var exports = module.instance.exports;
             var addFunc = exports.add;
             var multiplyFunc = exports.multiply;
+            var hypotFunc = exports.hypot;          
+            //
+            let array = [];
+            for (a=0;a<10000000;a++)
+            {
+                array.push([Math.random()*100,Math.random()*100]);
+            }
+            //
+            let distance = 0;
+            var startTime = performance.now()
+            for (a=0;a<array.length;a++)
+            {
+                distance = distance + Math.hypot(array[a][0],array[a][1])
+            }
+            var endTime = performance.now()
+            var time1 = endTime - startTime;
+            console.log(`Call to doSomething JS way took ${endTime - startTime} milliseconds`);
+            //
+            distance = 0;
+            startTime = performance.now()
+            for (a=0;a<array.length;a++)
+            {
+                distance = distance + hypotFunc(array[a][0],array[a][1])
+            }
+            endTime = performance.now()
+            var time2 = endTime - startTime;
+            console.log(`Call to doSomething WA way took ${endTime - startTime} milliseconds`);
+            //
+            document.getElementById("result").innerHTML=time1/time2;
 
-            console.log(addFunc(5,9));
-            document.getElementById("result").innerHTML=addFunc(21,21);
-            document.getElementById("result").innerHTML+=" - "+multiplyFunc(10,10);
+            
+
         })
     </script>
 </body>
